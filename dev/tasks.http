@@ -1,0 +1,38 @@
+POST localhost:9090
+Content-Type: application/json
+
+{
+  "title": "Pierwszy test",
+  "author": "Autor 1",
+  "createDateTime": "2019-11-24T12:00:00"
+}
+
+###
+
+GET localhost:9090
+
+###
+
+POST localhost:9090
+Content-Type: application/json
+
+{
+  "title": "Drugi test",
+  "author": "Autor 2",
+  "createDateTime": "2019-11-24T16:00:00"
+}
+
+###
+
+###
+
+POST localhost:9090
+Content-Type: application/json
+
+{
+  "title": "Trzeci test",
+  "author": "Autor 3",
+  "createDateTime": "2019-11-25T00:00:00"
+}
+
+###
