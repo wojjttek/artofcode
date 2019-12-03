@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pl.wojjttek</groupId>
-	<artifactId>tasks</artifactId>
+	<artifactId>tasks</artifactId>0
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tasks</name>
 	<description>Task Management System</description>
@@ -19,6 +19,12 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -42,6 +48,7 @@
 			<version>1.18.10</version>
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -1,4 +1,4 @@
-POST localhost:9090
+POST localhost:9090/api/tasks
 Content-Type: application/json
 
 {
@@ -9,11 +9,11 @@ Content-Type: application/json
 
 ###
 
-GET localhost:9090
+GET localhost:9090/api/tasks/
 
 ###
 
-POST localhost:9090
+POST localhost:9090/api/tasks/
 Content-Type: application/json
 
 {
@@ -26,13 +26,42 @@ Content-Type: application/json
 
 ###
 
-POST localhost:9090
+POST localhost:9090/api/tasks/
 Content-Type: application/json
 
 {
   "title": "Trzeci test",
   "author": "Autor 3",
   "createDateTime": "2019-11-25T00:00:00"
+}
+
+###
+
+DELETE localhost:9090/api/tasks/1
+
+###
+
+PUT localhost:9090/api/tasks
+
+###
+
+POST localhost:9090/api/tasks/1
+Content-Type: application/json
+
+{
+  "title": "Pierwszy test",
+  "author": "Autor 1.1",
+  "description": "Dodanie nowego testu"
+}
+
+###
+PUT localhost:9090/api/tasks/1
+Content-Type: application/json
+
+{
+  "title": "Poprawić temat",
+  "author": "Autor 1-1",
+  "description": "poprawka"
 }
 
 ###
