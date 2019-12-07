@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.sztukakodu.works.exceptions.NotFoundException;
 import pl.sztukakodu.works.tasks.control.TaskService;
 import pl.sztukakodu.works.tasks.entity.Task;
 
@@ -20,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping(path = "/api/tasks")
 @RequiredArgsConstructor
@@ -53,42 +53,26 @@ public class TaskController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
         log.info("Fetch task with id: {}", id);
-        try {
-            return ResponseEntity.ok(toTaskResponse(taskRepository.fetchById(id)));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(toTaskResponse(taskRepository.fetchById(id)));
     }
 
     @GetMapping(path = "/{id}/attachments/{filename}")
-    public ResponseEntity getAttachment(@PathVariable Long id, @PathVariable String filename, HttpServletRequest request) {
+    public ResponseEntity getAttachment(@PathVariable Long id, @PathVariable String filename, HttpServletRequest request) throws IOException {
         log.info("Fetch task with id: {}", id);
-        try {
-            taskService.getTask(id);
-            Resource resource = storageService.loadFile(filename);
-            String mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-            if (mimeType == null) {
-                mimeType = "application/octet-stream";
-            }
-            return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(resource);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
+        taskService.getTask(id);
+        Resource resource = storageService.loadFile(filename);
+        String mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
         }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(mimeType)).body(resource);
     }
 
     @PostMapping(path = "/{id}/attachments")
-    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Handling file upload: {}", file.getOriginalFilename());
-        try {
-            storageService.saveFile(id, file);
-            taskService.addAttachment(id, file.getOriginalFilename());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        storageService.saveFile(id, file);
+        taskService.addAttachment(id, file.getOriginalFilename());
         return ResponseEntity.noContent().build();
     }
 
@@ -107,22 +91,14 @@ public class TaskController {
     @DeleteMapping(path = "/{id}")
     public ResponseEntity deleteTask(@PathVariable Long id) {
         log.info("Deleting a task with id: {}", id);
-        try {
-            taskRepository.deleteById(id);
-        } catch (NotFoundException e) {
-            ResponseEntity.notFound().build();
-        }
+        taskRepository.deleteById(id);
         return ResponseEntity.accepted().build();
     }
 
     @PutMapping(path = "/{id}")
     public ResponseEntity updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request) {
         log.info("Update a task");
-        try {
-            taskService.updateTask(id, request.getTitle(), request.getAuthor(), request.getDescription());
-        } catch (NotFoundException e) {
-            ResponseEntity.notFound().build();
-        }
+        taskService.updateTask(id, request.getTitle(), request.getAuthor(), request.getDescription());
         return ResponseEntity.accepted().build();
     }
 }
