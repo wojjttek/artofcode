@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Works Application System</title>
+</head>
+<body>
+<h1>It works!</h1>
+
+<!--<ol>
+    <li th:each="task: ${tasks}" th:text="${task}"></li>
+</ol>-->
+
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Tytuł</th>
+        <th>Autor</th>
+        <th>Opis</th>
+        <th>Data utworzenia</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task: ${tasks}">
+        <td th:text="${task.id}"></td>
+        <td th:text="${task.title}"></td>
+        <td th:text="${task.author}"></td>
+        <td th:text="${task.description}"></td>
+        <td th:text="${task.createDateTime}"></td>
+        <td>
+
+            <form action="#" th:action="@{tasks/delete/{id}(id=${task.id})}" method="post">
+                <button type="submit">Usuń</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+
+
+</table>
+
+
+<form th:object="${newTask}" th:action="@{/tasks}" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <label>
+            Tytuł
+            <input th:field="*{title}" type="text"/>
+        </label>
+        <label>
+            Autor
+            <input th:field="*{author}" type="text"/>
+        </label>
+        <label>
+            Opis
+            <textarea th:field="*{description}"></textarea>
+        </label>
+        <label>
+            Załącznik
+            <input type="file" name="attachment"></input>
+        </label>
+        <label>
+            Komentarz
+            <input th:field="*{attachmentComment}"></input>
+        </label>
+    </fieldset>
+    <button type="submit">Dodaj</button>
+</form>
+</body>
+</html>

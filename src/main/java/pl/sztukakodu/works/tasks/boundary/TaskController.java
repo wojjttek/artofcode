@@ -8,14 +8,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.sztukakodu.works.tags.control.TagsService;
+import pl.sztukakodu.works.tags.entity.Tag;
 import pl.sztukakodu.works.tasks.control.TaskService;
+import pl.sztukakodu.works.tasks.entity.TagRef;
 import pl.sztukakodu.works.tasks.entity.Task;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,31 +32,46 @@ public class TaskController {
     private final TaskRepository taskRepository;
     private final TaskConfig taskConfig;
     private final TaskService taskService;
+    private final TagsService tagsService;
 
-    @PostConstruct
+/*    @PostConstruct
     void init() {
         taskService.addTask("zadanie 1", "author 1", "description 1");
         taskService.addTask("zadanie 2", "author 2", "description 2");
         taskService.addTask("zadanie 3", "author 3", "description 3");
-    }
+    }*/
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam Optional<String> query) {
-        log.info("Fetching all tasks with filter: {}", query);
-        return ResponseEntity.ok(query.map(taskService::filterAllByQuery)
-                .orElseGet(taskService::fetchAll).stream()
-                .map(this::toTaskResponse)
-                .collect(Collectors.toList()));
+    public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam Optional<String> title) {
+        log.info("Fetching all tasks with filter: {}", title);
+        return ResponseEntity.ok(toTaskResponse(title.map(taskService::filterByTitle)
+                .orElseGet(taskService::fetchAll)));
     }
 
-    private TaskResponse toTaskResponse(Task t) {
-        return new TaskResponse(t.getId(), t.getTitle(), t.getAuthor(), t.getDescription(), t.getCreateDateTime(), t.getFiles());
+    public List<TaskResponse> toTaskResponse(List<Task> tasks) {
+        return tasks.stream()
+                .map(task -> {
+                    List<Long> tagIds = task.getTagRefs().stream().map(TagRef::getTag).collect(Collectors.toList());
+                    Set<Tag> tags = tagsService.findAllById(tagIds);
+                    return TaskResponse.from(task, tags);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/_search")
+    public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam(defaultValue = "false") Boolean attachments) {
+        log.info("Fetching all tasks with attachments: {}", attachments);
+        if (attachments) {
+            return  ResponseEntity.ok(toTaskResponse(taskService.findWithAttachments()));
+        } else {
+            return  ResponseEntity.ok(toTaskResponse(taskService.fetchAll()));
+        }
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskViewResponse> getTaskById(@PathVariable Long id) {
         log.info("Fetch task with id: {}", id);
-        return ResponseEntity.ok(toTaskResponse(taskRepository.fetchById(id)));
+        return ResponseEntity.ok(TaskViewResponse.from(taskRepository.fetchById(id)));
     }
 
     @GetMapping(path = "/{id}/attachments/{filename}")
@@ -69,10 +87,10 @@ public class TaskController {
     }
 
     @PostMapping(path = "/{id}/attachments")
-    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file, @RequestParam("comment") String comment) throws IOException {
         log.info("Handling file upload: {}", file.getOriginalFilename());
         storageService.saveFile(id, file);
-        taskService.addAttachment(id, file.getOriginalFilename());
+        taskService.addAttachment(id, file, comment);
         return ResponseEntity.noContent().build();
     }
 
@@ -83,6 +101,17 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping(path = "{id}/tags")
+    public ResponseEntity addTag(@PathVariable Long id, @RequestBody AddTagRequest request) {
+        log.info("Storing new tag: {}", id);
+        taskService.addTag(id, request.getTagId());
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping(path = "/{id}/tags/{tagId}")
+    public ResponseEntity removeTag(@PathVariable Long id, @PathVariable Long tagId) {
+        taskService.removeTag(id, tagId);
+        return ResponseEntity.noContent().build();
+    }
     @GetMapping(path = "/hello")
     public ResponseEntity<String> hello() {
         return ResponseEntity.ok(taskConfig.getEndpointMessage());

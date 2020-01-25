@@ -1,29 +1,30 @@
 package pl.sztukakodu.works.tasks.control;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import pl.sztukakodu.works.Clock;
+import pl.sztukakodu.works.tags.control.TagsService;
+import pl.sztukakodu.works.tags.entity.Tag;
+import pl.sztukakodu.works.tasks.boundary.StorageService;
 import pl.sztukakodu.works.tasks.boundary.TaskRepository;
 import pl.sztukakodu.works.tasks.entity.Task;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
     private final Clock clock;
-    private final AtomicLong nextTaskId = new AtomicLong(0L);
-    public TaskService(TaskRepository taskRepository, Clock clock) {
-        this.taskRepository = taskRepository;
-        this.clock = clock;
-    }
+    private final StorageService storageService;
+    private final TagsService tagsService;
 
     public Task addTask(String title, String author, String description ) {
-        Task task = new Task(nextTaskId.getAndIncrement(), title, author, description, clock.time(), new ArrayList<>());
+        Task task = new Task(title, author, description, clock.time());
         taskRepository.add(task);
         return task;
     }
@@ -36,14 +37,17 @@ public class TaskService {
         return taskRepository.fetchAll();
     }
 
-    public List<Task> filterAllByQuery(String query) {
-        return taskRepository.fetchAll().stream().filter(task ->
-                task.getTitle().contains(query) || task.getDescription().contains(query)
-        ).collect(Collectors.toList());
+    public List<Task> filterByTitle(String title) {
+        return taskRepository.findByTitle(title);
     }
 
-    public void addAttachment(Long id, String fileName) {
-        taskRepository.addAttachment(id, fileName);
+    public void addAttachment(Long id, MultipartFile attachment, String comment) throws IOException {
+        Task task = taskRepository.fetchById(id);
+        if (!attachment.isEmpty()) {
+            String fileName = storageService.saveFile(id, attachment);
+            task.addAttachment(fileName, comment);
+        }
+        taskRepository.save(task);
     }
 
     public Task getTask(Long id) {
@@ -52,5 +56,23 @@ public class TaskService {
 
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
+    }
+
+    public void addTag(Long id, Long tagId) {
+        Task task = taskRepository.fetchById(id);
+        Tag tag = tagsService.findById(tagId);
+        task.addTag(tag);
+        taskRepository.save(task);
+    }
+
+    public void removeTag(Long id, Long tagId) {
+        Task task = taskRepository.fetchById(id);
+        Tag tag = tagsService.findById(tagId);
+        task.removeTag(tag);
+        taskRepository.save(task);
+    }
+
+    public List<Task> findWithAttachments() {
+        return taskRepository.findWithAttachments();
     }
 }

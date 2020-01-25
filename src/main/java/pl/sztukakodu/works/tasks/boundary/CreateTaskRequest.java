@@ -11,4 +11,5 @@ public class CreateTaskRequest {
     private String title;
     private String author;
     private String description;
+    private String attachmentComment;
 }

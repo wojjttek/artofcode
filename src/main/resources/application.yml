@@ -1,3 +1,10 @@
 server.port: 9090
 app.tasks.endpointMessage: Hello, World!!!
 storage.path: D:/opt/works
+spring:
+  h2:
+    console:
+      enabled: true
+logging:
+    level:
+      org.springframework.jdbc.core: DEBUG

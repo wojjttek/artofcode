@@ -2,6 +2,7 @@ package pl.sztukakodu.works.tasks.boundary;
 
 import org.springframework.stereotype.Repository;
 import pl.sztukakodu.works.exceptions.NotFoundException;
+import pl.sztukakodu.works.tasks.entity.Attachment;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.util.*;
@@ -45,6 +46,21 @@ public class MemoryTaskRepository implements TaskRepository {
     @Override
     public void addAttachment(Long id, String fileName) {
         Task task = findById(id).orElseThrow(() -> new NotFoundException("Task with id not found: " + id));
-        task.getFiles().add(fileName);
+        task.getAttachments().add(new Attachment(fileName,null));
+    }
+
+    @Override
+    public void save(Task task) {
+        tasks.add(task);
+    }
+
+    @Override
+    public List<Task> findByTitle(String title) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Task> findWithAttachments() {
+        throw new UnsupportedOperationException();
     }
 }

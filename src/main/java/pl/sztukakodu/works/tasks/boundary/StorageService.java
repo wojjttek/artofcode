@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 
 public interface StorageService {
 
-    void saveFile(Long taskId, MultipartFile file) throws IOException;
+    String saveFile(Long taskId, MultipartFile file) throws IOException;
 
     Resource loadFile(String fileName) throws MalformedURLException;
 }
