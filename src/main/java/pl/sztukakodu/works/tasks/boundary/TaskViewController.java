@@ -16,7 +16,6 @@ import java.io.IOException;
 @AllArgsConstructor
 public class TaskViewController {
     private final TaskService taskService;
-    private final StorageService storageService;
 
     @GetMapping("/")
     public String welcome(Model model) {

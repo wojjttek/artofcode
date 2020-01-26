@@ -1,0 +1,119 @@
+POST localhost:9090/api/projects
+Content-Type: application/json
+
+{
+  "name": "Mój drugi projekt"
+}
+
+###
+
+POST localhost:9090/api/projects
+Content-Type: application/json
+
+{
+  "name": "Mój trzeci projekt"
+}
+
+###
+
+POST localhost:9090/api/projects
+Content-Type: application/json
+
+{
+  "name": "Mój czwarty projekt"
+}
+
+###
+
+POST localhost:9090/api/projects
+Content-Type: application/json
+
+{
+  "name": "Mój czwarty projekt"
+}
+
+###
+
+GET localhost:9090/api/projects/
+
+###
+
+PUT localhost:9090/api/projects/5
+Content-Type: application/json
+
+{
+  "name": "Mój piąty test"
+}
+
+###
+
+GET localhost:9090/api/projects/
+
+###
+
+GET localhost:9090/api/projects/
+
+###
+
+DELETE localhost:9090/api/projects/5
+
+###
+
+GET localhost:9090/api/projects/
+
+###
+
+GET localhost:9090/api/tasks/
+
+###
+
+PUT localhost:9090/api/projects/1/removeTask
+Content-Type: application/json
+
+{
+  "taskId": 2
+}
+
+###
+
+GET localhost:9090/api/tasks/
+
+###
+
+PUT localhost:9090/api/projects/1/removeTask
+Content-Type: application/json
+
+{
+  "taskId": 3
+}
+
+###
+
+GET localhost:9090/api/projects/
+
+###
+
+PUT localhost:9090/api/projects/3/addTask
+Content-Type: application/json
+
+{
+  "taskId": 2
+}
+
+###
+
+
+GET localhost:9090/api/projects/
+
+###
+
+###
+
+PUT localhost:9090/api/projects/4/addTask
+Content-Type: application/json
+
+{
+  "taskId": 3
+}
+
+###

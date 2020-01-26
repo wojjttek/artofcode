@@ -61,4 +61,5 @@ public class AdaptedTasksCrudRepository implements TaskRepository {
     public List<Task> findWithAttachments() {
         return taskCrudRepository.findWithAttachments();
     }
+
 }

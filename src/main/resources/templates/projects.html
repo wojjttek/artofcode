@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+</head>
+<body>
+<h1>Projects</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Nazwa</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="project: ${projects}">
+        <td th:text="${project.id}"></td>
+        <td th:text="${project.name}"></td>
+        <td>
+
+            <form action="#" th:action="@{projects/delete/{id}(id=${project.id})}" method="post">
+                <button type="submit">Usuń</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<form th:object="${newProject}" th:action="@{/projects/add}" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <label>
+            Nazwa
+            <input th:field="*{name}" type="text"/>
+        </label>
+    </fieldset>
+    <button type="submit">Dodaj</button>
+</form>
+</body>
+</html>

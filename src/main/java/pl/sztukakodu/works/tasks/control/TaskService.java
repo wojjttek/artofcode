@@ -23,13 +23,13 @@ public class TaskService {
     private final StorageService storageService;
     private final TagsService tagsService;
 
-    public Task addTask(String title, String author, String description ) {
+    public Task addTask(String title, String author, String description) {
         Task task = new Task(title, author, description, clock.time());
         taskRepository.add(task);
         return task;
     }
 
-    public void updateTask( Long id, String title, String author, String description )  {
+    public void updateTask(Long id, String title, String author, String description)  {
         taskRepository.update(id, title, author, description);
     }
 
@@ -71,6 +71,7 @@ public class TaskService {
         task.removeTag(tag);
         taskRepository.save(task);
     }
+
 
     public List<Task> findWithAttachments() {
         return taskRepository.findWithAttachments();

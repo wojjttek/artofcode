@@ -16,6 +16,7 @@ import pl.sztukakodu.works.tasks.entity.Task;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class TaskController {
                 .orElseGet(taskService::fetchAll)));
     }
 
-    public List<TaskResponse> toTaskResponse(List<Task> tasks) {
+    public List<TaskResponse> toTaskResponse(Collection<Task> tasks) {
         return tasks.stream()
                 .map(task -> {
                     List<Long> tagIds = task.getTagRefs().stream().map(TagRef::getTag).collect(Collectors.toList());
@@ -94,13 +95,6 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
-    public ResponseEntity addTask(@RequestBody CreateTaskRequest task) {
-        log.info("Storing new task: {}", task);
-        taskService.addTask(task.getTitle(), task.getAuthor(), task.getDescription());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @PostMapping(path = "{id}/tags")
     public ResponseEntity addTag(@PathVariable Long id, @RequestBody AddTagRequest request) {
         log.info("Storing new tag: {}", id);
@@ -115,6 +109,14 @@ public class TaskController {
     @GetMapping(path = "/hello")
     public ResponseEntity<String> hello() {
         return ResponseEntity.ok(taskConfig.getEndpointMessage());
+    }
+
+
+    @PostMapping
+    public ResponseEntity addTask(@RequestBody CreateTaskRequest task) {
+        log.info("Storing new task: {}", task);
+        taskService.addTask(task.getTitle(), task.getAuthor(), task.getDescription());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping(path = "/{id}")

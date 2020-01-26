@@ -11,7 +11,6 @@ import pl.sztukakodu.works.tags.entity.Tag;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -27,15 +26,12 @@ public class Task {
     private Set<Attachment> attachments = new HashSet<>();
     private Set<TagRef> tagRefs = new HashSet<>();
 
+
     public Task(String title, String author, String description, LocalDateTime time) {
         this.title = title;
         this.author = author;
         this.description = description;
         this.createDateTime = time;
-    }
-
-    public Set<String> getFiles() {
-        return attachments.stream().map(Attachment::getFilename).collect(Collectors.toSet());
     }
 
     public void addAttachment(String fileName, String comment) {
@@ -49,4 +45,5 @@ public class Task {
     public void removeTag(Tag tag) {
         tagRefs.remove(new TagRef(tag));
     }
+
 }
