@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 public class TaskResponse {
-    private long id;
+    private Long id;
     private String title;
     private String author;
     private String description;
@@ -28,5 +28,9 @@ public class TaskResponse {
                 tags.stream()
                         .map(TagResponse::new)
                         .collect(Collectors.toSet()));
+    }
+
+    public TaskResponse(String title) {
+        this.title = title;
     }
 }

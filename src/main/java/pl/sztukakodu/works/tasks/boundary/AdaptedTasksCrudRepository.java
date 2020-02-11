@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pl.sztukakodu.works.exceptions.NotFoundException;
 import pl.sztukakodu.works.tasks.entity.Task;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -21,6 +22,12 @@ public class AdaptedTasksCrudRepository implements TaskRepository {
     public void add(Task task) {
         taskCrudRepository.save(task);
     }
+
+    @Override
+    public void addAll(Iterable<Task> tasks) {
+        taskCrudRepository.saveAll(tasks);
+    }
+
 
     @Override
     public List<Task> fetchAll() {
@@ -54,12 +61,12 @@ public class AdaptedTasksCrudRepository implements TaskRepository {
 
     @Override
     public List<Task> findByTitle(String title) {
-        return taskCrudRepository.findByTitle(title);
+        return taskCrudRepository.findAllByTitleLike(title);
     }
 
     @Override
     public List<Task> findWithAttachments() {
-        return taskCrudRepository.findWithAttachments();
+        return Collections.emptyList();
     }
 
 }

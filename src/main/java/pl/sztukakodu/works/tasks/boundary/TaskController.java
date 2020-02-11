@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.sztukakodu.works.tags.control.TagsService;
 import pl.sztukakodu.works.tags.entity.Tag;
 import pl.sztukakodu.works.tasks.control.TaskService;
-import pl.sztukakodu.works.tasks.entity.TagRef;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +34,6 @@ public class TaskController {
     private final TaskService taskService;
     private final TagsService tagsService;
 
-/*    @PostConstruct
-    void init() {
-        taskService.addTask("zadanie 1", "author 1", "description 1");
-        taskService.addTask("zadanie 2", "author 2", "description 2");
-        taskService.addTask("zadanie 3", "author 3", "description 3");
-    }*/
-
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getTasks(@RequestParam Optional<String> title) {
         log.info("Fetching all tasks with filter: {}", title);
@@ -50,13 +42,11 @@ public class TaskController {
     }
 
     public List<TaskResponse> toTaskResponse(Collection<Task> tasks) {
-        return tasks.stream()
-                .map(task -> {
-                    List<Long> tagIds = task.getTagRefs().stream().map(TagRef::getTag).collect(Collectors.toList());
-                    Set<Tag> tags = tagsService.findAllById(tagIds);
-                    return TaskResponse.from(task, tags);
-                })
-                .collect(Collectors.toList());
+        return tasks.stream().map(task -> {
+            List<Long> tagIds = task.getTags().stream().map(Tag::getId).collect(Collectors.toList());
+            Set<Tag> tags = tagsService.findAllById(tagIds);
+            return TaskResponse.from(task, tags);
+        }).collect(Collectors.toList());
     }
 
     @GetMapping(path = "/_search")

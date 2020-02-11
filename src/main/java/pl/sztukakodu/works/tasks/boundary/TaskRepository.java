@@ -8,6 +8,8 @@ public interface TaskRepository {
 
     void add(Task task);
 
+    void addAll(Iterable<Task> tasks);
+
     List<Task> fetchAll();
 
     Task fetchById(Long id);

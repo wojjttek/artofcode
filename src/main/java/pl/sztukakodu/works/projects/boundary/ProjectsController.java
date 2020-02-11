@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.sztukakodu.works.projects.control.ProjectService;
 import pl.sztukakodu.works.projects.entity.Project;
 import pl.sztukakodu.works.tasks.boundary.TaskController;
+import pl.sztukakodu.works.tasks.boundary.TaskResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +25,17 @@ public class ProjectsController {
     private final TaskController taskController;
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getProjects(@RequestParam Optional<String> name) {
-        log.info("Fetching all projects with filter: {}", name);
-        return ResponseEntity.ok(toProjectResponse(name.map(projectService::findByName)
-                .orElseGet(projectService::fetchAll)));
+    public ResponseEntity<List<ProjectResponse>> getProjects(@RequestParam Optional<Boolean> full) {
+        log.info("Fetching all projects with full: {}", full);
+        if (full.isPresent() && full.get()) {
+            return ResponseEntity.ok(toProjectResponse(projectService.fetchAll()));
+        } else {
+            return ResponseEntity.ok(projectService.findAllBy().stream()
+                    .map(p -> new ProjectResponse(p.getId(), p.getName(), p.getTasks().stream()
+                            .map(t -> new TaskResponse(t.getTitle()))
+                            .collect(Collectors.toList())))
+                    .collect(Collectors.toList()));
+        }
     }
 
     @GetMapping(path = "/{id}")
@@ -73,7 +81,7 @@ public class ProjectsController {
 
     @PutMapping(path = "/{id}/removeTask")
     public ResponseEntity removeTask(@PathVariable Long id, @RequestBody AssignTaskRequest request) {
-        log.info("Remove task with id {} to project id {}", request.getTaskId(), id);
+        log.info("Remove task with id {} to project id {}", id, request.getTaskId());
         projectService.removeTask(id, request.getTaskId());
         return ResponseEntity.accepted().build();
     }

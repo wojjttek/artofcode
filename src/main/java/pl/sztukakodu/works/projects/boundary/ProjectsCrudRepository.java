@@ -1,24 +1,19 @@
 package pl.sztukakodu.works.projects.boundary;
 
-import org.springframework.data.jdbc.repository.query.Modifying;
-import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import pl.sztukakodu.works.projects.entity.Project;
 
 import java.util.List;
 
-public interface ProjectsCrudRepository extends CrudRepository<Project, Long> {
-    @Query("select * from Project where upper(name) like '%' || upper(:name) || '%'")
+public interface ProjectsCrudRepository extends JpaRepository<Project, Long> {
+    @Query("from Project where upper(name) like '%' || upper(:name) || '%'")
     List<Project> findByName(String name);
 
-    @Query("select * from Project p join Task t on p.id = t.project where t.id = :taskId")
-    Project findByTaskId(Long taskId);
+    @EntityGraph(value = "Project.all", type = EntityGraph.EntityGraphType.FETCH)
+    List<Project> findAll();
 
-    @Modifying
-    @Query("update Task set project = null where id = :taskId and project = :id")
-    void removeProjectFromTask(Long id, Long taskId);
-
-    @Modifying
-    @Query("update Task set project = :id where id = :taskId ")
-    void addProjectToTask(Long id, Long taskId);
+    @EntityGraph(value = "Project.short", type = EntityGraph.EntityGraphType.FETCH)
+    List<ProjectView> findAllBy();
 }

@@ -2,29 +2,38 @@ package pl.sztukakodu.works.tasks.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import pl.sztukakodu.works.tags.entity.Tag;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 @Data
+@Entity
 @AllArgsConstructor
-@Table("task")
-@RequiredArgsConstructor
+@Table(name = "task")
+@NoArgsConstructor
+@NamedEntityGraph(
+        name="Task.detail",
+        attributeNodes = { @NamedAttributeNode("attachments"), @NamedAttributeNode("tags")}
+)
+@EqualsAndHashCode(exclude = {"tags","attachments"})
 public class Task {
     @Id
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String title;
     private String author;
     private String description;
-    @Column("created_at") private LocalDateTime createDateTime;
+    @Column(name="created_at") private LocalDateTime createDateTime;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "task")
     private Set<Attachment> attachments = new HashSet<>();
-    private Set<TagRef> tagRefs = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "tag_task", joinColumns = @JoinColumn(name = "task"), inverseJoinColumns = @JoinColumn(name="tag"))
+    private Set<Tag> tags = new HashSet<>();
 
 
     public Task(String title, String author, String description, LocalDateTime time) {
@@ -39,11 +48,15 @@ public class Task {
     }
 
     public void addTag(Tag tag) {
-        tagRefs.add(new TagRef(tag));
+        tags.add(tag);
     }
 
     public void removeTag(Tag tag) {
-        tagRefs.remove(new TagRef(tag));
+        tags.remove(new TagRef(tag));
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof Task;
     }
 
 }

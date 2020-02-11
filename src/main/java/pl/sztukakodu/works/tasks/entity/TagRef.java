@@ -2,14 +2,18 @@ package pl.sztukakodu.works.tasks.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.relational.core.mapping.Table;
 import pl.sztukakodu.works.tags.entity.Tag;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
 @Data
-@Table("tag_task")
+@Table(name="tag_task")
 @NoArgsConstructor
 public class TagRef {
-    private Long tag;
+    @Id private Long tag;
 
     public TagRef(Tag tag) {
         this.tag= tag.getId();

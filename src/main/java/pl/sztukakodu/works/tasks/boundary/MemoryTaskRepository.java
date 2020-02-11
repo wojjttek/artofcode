@@ -15,6 +15,11 @@ public class MemoryTaskRepository implements TaskRepository {
         tasks.add(task);
     }
 
+    @Override
+    public void addAll(Iterable<Task> tasks) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
     public List<Task> fetchAll() {
         return new ArrayList<>(tasks);
     }

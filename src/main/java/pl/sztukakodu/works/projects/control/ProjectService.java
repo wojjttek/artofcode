@@ -3,9 +3,11 @@ package pl.sztukakodu.works.projects.control;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.sztukakodu.works.exceptions.NotFoundException;
+import pl.sztukakodu.works.projects.boundary.ProjectView;
 import pl.sztukakodu.works.projects.boundary.ProjectsCrudRepository;
 import pl.sztukakodu.works.projects.entity.Project;
 import pl.sztukakodu.works.tasks.control.TaskService;
+import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,15 +47,25 @@ public class ProjectService {
         return projectsCrudRepository.findByName(name);
     }
 
+    public List<ProjectView> findAllBy() {
+        return projectsCrudRepository.findAllBy();
+    }
+
     public void addTask(Long id, Long taskId) {
-        Project projectWithTask = projectsCrudRepository.findByTaskId(taskId);
-        Optional.ofNullable(projectWithTask).ifPresent(p -> {
-            projectsCrudRepository.removeProjectFromTask(p.getId(), taskId);
+        Optional<Project> projectWithTask = projectsCrudRepository.findById(id);
+        projectWithTask.ifPresent(p -> {
+            Task task = taskService.getTask(taskId);
+            p.getTasks().add(task);
+            projectsCrudRepository.save(p);
         });
-        projectsCrudRepository.addProjectToTask(id, taskId);
     }
 
     public void removeTask(Long id, Long taskId) {
-        projectsCrudRepository.removeProjectFromTask(id, taskId);
+        Optional<Project> projectWithTask = projectsCrudRepository.findById(id);
+        projectWithTask.ifPresent(p -> {
+            Task task = taskService.getTask(taskId);
+            p.getTasks().remove(task);
+            projectsCrudRepository.save(p);
+        });
     }
 }
