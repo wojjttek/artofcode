@@ -1,18 +1,19 @@
 package pl.sztukakodu.works.tasks.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import pl.sztukakodu.works.entity.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "attachment")
 @NoArgsConstructor
-public class Attachment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Attachment extends BaseEntity {
     private String filename;
     private String comment;
 

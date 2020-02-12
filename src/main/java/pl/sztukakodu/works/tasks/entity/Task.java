@@ -1,16 +1,18 @@
 package pl.sztukakodu.works.tasks.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import pl.sztukakodu.works.entity.BaseEntity;
 import pl.sztukakodu.works.tags.entity.Tag;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @Table(name = "task")
@@ -19,11 +21,7 @@ import java.util.Set;
         name="Task.detail",
         attributeNodes = { @NamedAttributeNode("attachments"), @NamedAttributeNode("tags")}
 )
-@EqualsAndHashCode(exclude = {"tags","attachments"})
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Task extends BaseEntity {
     private String title;
     private String author;
     private String description;

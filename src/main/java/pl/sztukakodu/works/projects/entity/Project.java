@@ -1,7 +1,9 @@
 package pl.sztukakodu.works.projects.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import pl.sztukakodu.works.entity.BaseEntity;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import javax.persistence.*;
@@ -18,12 +20,7 @@ import java.util.Set;
         subgraphs = {
                 @NamedSubgraph(name = "subgraph.task", type=Task.class, attributeNodes = { @NamedAttributeNode("attachments"), @NamedAttributeNode("tags")})
         })
-@NamedEntityGraph(name = "Project.short",
-        attributeNodes = {@NamedAttributeNode("tasks")})
-public class Project {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Project extends BaseEntity {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "project")
