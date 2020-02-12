@@ -14,6 +14,5 @@ public interface ProjectsCrudRepository extends JpaRepository<Project, Long> {
     @EntityGraph(value = "Project.all", type = EntityGraph.EntityGraphType.FETCH)
     List<Project> findAll();
 
-    @EntityGraph(value = "Project.short", type = EntityGraph.EntityGraphType.FETCH)
     List<ProjectView> findAllBy();
 }

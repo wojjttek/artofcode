@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.sztukakodu.works.projects.control.ProjectService;
 import pl.sztukakodu.works.projects.entity.Project;
 import pl.sztukakodu.works.tasks.boundary.TaskController;
-import pl.sztukakodu.works.tasks.boundary.TaskResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +30,7 @@ public class ProjectsController {
             return ResponseEntity.ok(toProjectResponse(projectService.fetchAll()));
         } else {
             return ResponseEntity.ok(projectService.findAllBy().stream()
-                    .map(p -> new ProjectResponse(p.getId(), p.getName(), p.getTasks().stream()
-                            .map(t -> new TaskResponse(t.getTitle()))
-                            .collect(Collectors.toList())))
+                    .map(p -> new ProjectResponse(p.getId(), p.getName()))
                     .collect(Collectors.toList()));
         }
     }

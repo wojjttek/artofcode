@@ -14,4 +14,9 @@ public class ProjectResponse {
     private Long id;
     private String name;
     private List<TaskResponse> tasks;
+
+    public ProjectResponse(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

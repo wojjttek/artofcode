@@ -9,7 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "project")
 @NoArgsConstructor
 @NamedEntityGraph(name = "Project.all",
@@ -24,7 +25,6 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "project")
     private Set<Task> tasks = new HashSet<>();
