@@ -13,6 +13,8 @@ import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,13 +25,18 @@ public class TaskService {
     private final StorageService storageService;
     private final TagsService tagsService;
 
-    public Task addTask(String title, String author, String description) {
+    public Task addTask(String title, String author, String description, Set<String> tags) {
         Task task = new Task(title, author, description, clock.time());
+        Set<Tag> tagsForTask = tags.stream()
+                .map(tag ->
+                tagsService.findByName(tag).orElse(new Tag(tag))
+        ).collect(Collectors.toSet());
+        task.addTags(tagsForTask);
         taskRepository.add(task);
         return task;
     }
 
-    public void updateTask(Long id, String title, String author, String description)  {
+    public void updateTask(Long id, String title, String author, String description) {
         taskRepository.update(id, title, author, description);
     }
 

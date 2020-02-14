@@ -7,6 +7,7 @@ import pl.sztukakodu.works.tags.boundary.TagsRepository;
 import pl.sztukakodu.works.tags.entity.Tag;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -23,5 +24,9 @@ public class TagsService {
     public Set<Tag> findAllById(List<Long> tagIds) {
         return StreamSupport.stream(tagsRepository.findAllById(tagIds).spliterator(), false).collect(Collectors.toSet());
 
+    }
+
+    public Optional<Tag> findByName(String tag) {
+        return  tagsRepository.findByNameContainingIgnoreCase(tag);
     }
 }

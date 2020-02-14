@@ -105,7 +105,7 @@ public class TaskController {
     @PostMapping
     public ResponseEntity addTask(@RequestBody CreateTaskRequest task) {
         log.info("Storing new task: {}", task);
-        taskService.addTask(task.getTitle(), task.getAuthor(), task.getDescription());
+        taskService.addTask(task.getTitle(), task.getAuthor(), task.getDescription(), task.getTags());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

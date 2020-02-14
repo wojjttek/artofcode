@@ -10,6 +10,7 @@ import pl.sztukakodu.works.tasks.control.TaskService;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Slf4j
 @Controller
@@ -27,7 +28,7 @@ public class TaskViewController {
     @PostMapping("/tasks")
     public String addTask(@ModelAttribute("newTask") CreateTaskRequest request,
                           @RequestParam MultipartFile attachment) throws IOException {
-        Task task = taskService.addTask(request.getTitle(), request.getAuthor(), request.getDescription());
+        Task task = taskService.addTask(request.getTitle(), request.getAuthor(), request.getDescription(), Collections.emptySet());
         if (attachment!=null && !attachment.isEmpty()) {
             taskService.addAttachment(task.getId(), attachment, request.getAttachmentComment());
         }

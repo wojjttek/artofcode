@@ -7,6 +7,7 @@ import pl.sztukakodu.works.entity.BaseEntity;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,5 +29,9 @@ public class Project extends BaseEntity {
 
     public Project(String name) {
         this.name = name;
+    }
+
+    public void addTasks(Collection<Task> tasks) {
+        this.tasks.addAll(tasks);
     }
 }

@@ -9,8 +9,10 @@ import pl.sztukakodu.works.tags.entity.Tag;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -18,19 +20,22 @@ import java.util.Set;
 @Table(name = "task")
 @NoArgsConstructor
 @NamedEntityGraph(
-        name="Task.detail",
-        attributeNodes = { @NamedAttributeNode("attachments"), @NamedAttributeNode("tags")}
+        name = "Task.detail",
+        attributeNodes = {@NamedAttributeNode("attachments"), @NamedAttributeNode("tags")}
 )
 public class Task extends BaseEntity {
     private String title;
     private String author;
     private String description;
-    @Column(name="created_at") private LocalDateTime createDateTime;
+    @Column(name = "created_at")
+    private LocalDateTime createDateTime;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "task")
     private Set<Attachment> attachments = new HashSet<>();
-    @ManyToMany
-    @JoinTable(name = "tag_task", joinColumns = @JoinColumn(name = "task"), inverseJoinColumns = @JoinColumn(name="tag"))
+    @ManyToMany(cascade = {
+            CascadeType.MERGE, CascadeType.PERSIST
+    })
+    @JoinTable(name = "tag_task", joinColumns = @JoinColumn(name = "task"), inverseJoinColumns = @JoinColumn(name = "tag"))
     private Set<Tag> tags = new HashSet<>();
 
 
@@ -49,12 +54,12 @@ public class Task extends BaseEntity {
         tags.add(tag);
     }
 
-    public void removeTag(Tag tag) {
-        tags.remove(new TagRef(tag));
+    public void addTags(Collection<Tag> tags) {
+        this.tags.addAll(tags);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof Task;
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
 
 }

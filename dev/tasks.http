@@ -73,3 +73,19 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{api}}/tasks/
+Content-Type: application/json
+
+{
+  "title": "Dokończyć moduł 8",
+  "author": "Ja",
+  "description" : "Jpa i Hibernate cz.2. ",
+  "tags" : ["pilne", "w domu", "telefon"]
+}
+
+###
+
+GET {{api}}/tasks/
+
+###
