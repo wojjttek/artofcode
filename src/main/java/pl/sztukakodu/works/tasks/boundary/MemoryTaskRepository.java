@@ -34,7 +34,7 @@ public class MemoryTaskRepository implements TaskRepository {
         findById(id).ifPresent(tasks::remove);
     }
 
-    private Optional<Task> findById(Long id) {
+    public Optional<Task> findById(Long id) {
         return tasks.stream()
                 .filter(task -> id.equals(task.getId()))
                 .findFirst();

@@ -29,4 +29,8 @@ public class TagsService {
     public Optional<Tag> findByName(String tag) {
         return  tagsRepository.findByNameContainingIgnoreCase(tag);
     }
+
+    public Set<Tag> findAll() {
+        return StreamSupport.stream(tagsRepository.findAll().spliterator(), false).collect(Collectors.toSet());
+    }
 }

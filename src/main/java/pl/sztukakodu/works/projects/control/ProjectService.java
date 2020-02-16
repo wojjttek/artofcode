@@ -68,4 +68,8 @@ public class ProjectService {
             projectsCrudRepository.save(p);
         });
     }
+
+    public void save(Project project) {
+        projectsCrudRepository.save(project);
+    }
 }

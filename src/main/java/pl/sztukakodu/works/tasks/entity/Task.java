@@ -27,6 +27,7 @@ public class Task extends BaseEntity {
     private String title;
     private String author;
     private String description;
+    @Version    private Long version;
     @Column(name = "created_at")
     private LocalDateTime createDateTime;
     @OneToMany(cascade = CascadeType.ALL)

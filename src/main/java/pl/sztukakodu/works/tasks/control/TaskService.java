@@ -11,8 +11,10 @@ import pl.sztukakodu.works.tasks.boundary.StorageService;
 import pl.sztukakodu.works.tasks.boundary.TaskRepository;
 import pl.sztukakodu.works.tasks.entity.Task;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,13 +50,13 @@ public class TaskService {
         return taskRepository.findByTitle(title);
     }
 
+    @Transactional
     public void addAttachment(Long id, MultipartFile attachment, String comment) throws IOException {
         Task task = taskRepository.fetchById(id);
         if (!attachment.isEmpty()) {
             String fileName = storageService.saveFile(id, attachment);
             task.addAttachment(fileName, comment);
         }
-        taskRepository.save(task);
     }
 
     public Task getTask(Long id) {
@@ -65,22 +67,29 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
+    @Transactional
     public void addTag(Long id, Long tagId) {
         Task task = taskRepository.fetchById(id);
         Tag tag = tagsService.findById(tagId);
         task.addTag(tag);
-        taskRepository.save(task);
     }
 
+    @Transactional
     public void removeTag(Long id, Long tagId) {
         Task task = taskRepository.fetchById(id);
         Tag tag = tagsService.findById(tagId);
         task.removeTag(tag);
-        taskRepository.save(task);
     }
 
 
     public List<Task> findWithAttachments() {
         return taskRepository.findWithAttachments();
+    }
+
+    public Task findById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new NoSuchElementException(""));
+    }
+    public void save(Task task) {
+        taskRepository.save(task);
     }
 }

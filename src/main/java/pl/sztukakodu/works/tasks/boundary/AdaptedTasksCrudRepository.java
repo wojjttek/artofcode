@@ -9,6 +9,7 @@ import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -67,6 +68,11 @@ public class AdaptedTasksCrudRepository implements TaskRepository {
     @Override
     public List<Task> findWithAttachments() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Optional<Task> findById(Long id) {
+        return taskCrudRepository.findById(id);
     }
 
 }

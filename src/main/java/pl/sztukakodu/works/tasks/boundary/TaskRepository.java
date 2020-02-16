@@ -3,6 +3,7 @@ package pl.sztukakodu.works.tasks.boundary;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository {
 
@@ -25,4 +26,6 @@ public interface TaskRepository {
     List<Task> findByTitle(String title);
 
     List<Task> findWithAttachments();
+
+    Optional<Task> findById(Long id);
 }
