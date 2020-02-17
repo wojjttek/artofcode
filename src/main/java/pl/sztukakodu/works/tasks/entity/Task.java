@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import pl.sztukakodu.works.entity.BaseEntity;
 import pl.sztukakodu.works.tags.entity.Tag;
 
@@ -23,20 +24,22 @@ import java.util.Set;
         name = "Task.detail",
         attributeNodes = {@NamedAttributeNode("attachments"), @NamedAttributeNode("tags")}
 )
+@org.hibernate.annotations.Cache(usage= CacheConcurrencyStrategy.READ_WRITE)
 public class Task extends BaseEntity {
     private String title;
     private String author;
     private String description;
-    @Version    private Long version;
     @Column(name = "created_at")
     private LocalDateTime createDateTime;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "task")
+    @org.hibernate.annotations.Cache(usage= CacheConcurrencyStrategy.READ_WRITE)
     private Set<Attachment> attachments = new HashSet<>();
     @ManyToMany(cascade = {
             CascadeType.MERGE, CascadeType.PERSIST
     })
     @JoinTable(name = "tag_task", joinColumns = @JoinColumn(name = "task"), inverseJoinColumns = @JoinColumn(name = "tag"))
+    @org.hibernate.annotations.Cache(usage= CacheConcurrencyStrategy.READ_WRITE)
     private Set<Tag> tags = new HashSet<>();
 
 

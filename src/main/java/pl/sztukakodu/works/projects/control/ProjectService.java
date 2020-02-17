@@ -9,6 +9,7 @@ import pl.sztukakodu.works.projects.entity.Project;
 import pl.sztukakodu.works.tasks.control.TaskService;
 import pl.sztukakodu.works.tasks.entity.Task;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class ProjectService {
         return StreamSupport.stream(projectsCrudRepository.findAll().spliterator(), false).collect(Collectors.toList());
     }
 
+    @Transactional
     public void addProject(String name) {
         projectsCrudRepository.save(new Project(name));
     }
@@ -32,11 +34,13 @@ public class ProjectService {
         return projectsCrudRepository.findById(id).orElseThrow(() -> new NotFoundException("project not found"));
     }
 
+    @Transactional
     public void deleteProject(Long id) {
         Project project = findById(id);
         projectsCrudRepository.delete(project);
     }
 
+    @Transactional
     public void updateProject(Long id, String name) {
         Project project = findById(id);
         project.setName(name);
@@ -51,6 +55,7 @@ public class ProjectService {
         return projectsCrudRepository.findAllBy();
     }
 
+    @Transactional
     public void addTask(Long id, Long taskId) {
         Optional<Project> projectWithTask = projectsCrudRepository.findById(id);
         projectWithTask.ifPresent(p -> {
@@ -60,6 +65,7 @@ public class ProjectService {
         });
     }
 
+    @Transactional
     public void removeTask(Long id, Long taskId) {
         Optional<Project> projectWithTask = projectsCrudRepository.findById(id);
         projectWithTask.ifPresent(p -> {
@@ -69,6 +75,7 @@ public class ProjectService {
         });
     }
 
+    @Transactional
     public void save(Project project) {
         projectsCrudRepository.save(project);
     }

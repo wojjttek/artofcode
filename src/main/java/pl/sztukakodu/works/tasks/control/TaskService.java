@@ -27,6 +27,7 @@ public class TaskService {
     private final StorageService storageService;
     private final TagsService tagsService;
 
+    @Transactional
     public Task addTask(String title, String author, String description, Set<String> tags) {
         Task task = new Task(title, author, description, clock.time());
         Set<Tag> tagsForTask = tags.stream()
@@ -38,6 +39,7 @@ public class TaskService {
         return task;
     }
 
+    @Transactional
     public void updateTask(Long id, String title, String author, String description) {
         taskRepository.update(id, title, author, description);
     }
@@ -63,6 +65,7 @@ public class TaskService {
         return taskRepository.fetchById(id);
     }
 
+    @Transactional
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
@@ -89,6 +92,7 @@ public class TaskService {
     public Task findById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new NoSuchElementException(""));
     }
+    @Transactional
     public void save(Task task) {
         taskRepository.save(task);
     }

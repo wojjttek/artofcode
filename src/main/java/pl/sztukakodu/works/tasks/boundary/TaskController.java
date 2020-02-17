@@ -14,6 +14,7 @@ import pl.sztukakodu.works.tasks.control.TaskService;
 import pl.sztukakodu.works.tasks.entity.Task;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -78,6 +79,7 @@ public class TaskController {
     }
 
     @PostMapping(path = "/{id}/attachments")
+    @Transactional
     public ResponseEntity addAttachment(@PathVariable Long id, @RequestParam("file") MultipartFile file, @RequestParam("comment") String comment) throws IOException {
         log.info("Handling file upload: {}", file.getOriginalFilename());
         storageService.saveFile(id, file);
@@ -86,6 +88,7 @@ public class TaskController {
     }
 
     @PostMapping(path = "{id}/tags")
+    @Transactional
     public ResponseEntity addTag(@PathVariable Long id, @RequestBody AddTagRequest request) {
         log.info("Storing new tag: {}", id);
         taskService.addTag(id, request.getTagId());
@@ -103,6 +106,7 @@ public class TaskController {
 
 
     @PostMapping
+    @Transactional
     public ResponseEntity addTask(@RequestBody CreateTaskRequest task) {
         log.info("Storing new task: {}", task);
         taskService.addTask(task.getTitle(), task.getAuthor(), task.getDescription(), task.getTags());
@@ -110,6 +114,7 @@ public class TaskController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @Transactional
     public ResponseEntity deleteTask(@PathVariable Long id) {
         log.info("Deleting a task with id: {}", id);
         taskRepository.deleteById(id);
@@ -117,6 +122,7 @@ public class TaskController {
     }
 
     @PutMapping(path = "/{id}")
+    @Transactional
     public ResponseEntity updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequest request) {
         log.info("Update a task");
         taskService.updateTask(id, request.getTitle(), request.getAuthor(), request.getDescription());
